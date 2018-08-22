@@ -85,6 +85,20 @@ namespace vk_web_mock.Controllers
             });
         }
 
+        
+        [HttpGet("nodeAddresses")]
+        public IActionResult GetNodeAddresses(){
+            return base.Json(new object[] {});
+            // func (p *MockProvider) NodeAddresses() []v1.NodeAddress {
+            // 	return []v1.NodeAddress{
+            // 		{
+            // 			Type:    "InternalIP",
+            // 			Address: p.internalIP,
+            // 		},
+            // 	}
+            // }
+        }
+
         [HttpGet("{*unmatched}")]
         public IActionResult Catchall(string unmatched)
         {
