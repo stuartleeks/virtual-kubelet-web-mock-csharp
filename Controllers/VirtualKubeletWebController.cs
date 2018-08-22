@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using vk_web_mock.Models;
+using vk_web_mock.Services;
 
 namespace vk_web_mock.Controllers
 {
     [ApiController]
     public class VirtualKubeletWebController : Controller
     {
+        private readonly PodStore _podStore;
         private readonly ILogger _logger;
-        public VirtualKubeletWebController(ILogger<VirtualKubeletWebController> logger)
+        public VirtualKubeletWebController(
+            PodStore podStore,
+            ILogger<VirtualKubeletWebController> logger)
         {
+            _podStore = podStore;
             _logger = logger;
         }
 
@@ -99,6 +105,32 @@ namespace vk_web_mock.Controllers
             // }
         }
 
+        [HttpGet("getPods")]
+        public IActionResult GetPods()
+        {
+            var pods = _podStore.GetPods();
+            return base.Json(pods);
+        }
+
+        [HttpGet("getPodStatus")]
+        public IActionResult GetPodStatus([FromQuery] string @namespace, [FromQuery] string name)
+        {
+            var pod = _podStore.GetPod(@namespace, name);
+            if (pod == null)
+            {
+                return NotFound();
+            }
+            return Json(pod.Status);
+        }
+
+        [HttpPost("createPod")]
+        public IActionResult CreatePod(Pod pod)
+        {
+            _podStore.AddPod(pod);
+            return Ok();
+        }
+
+
         [HttpGet("{*unmatched}")]
         public IActionResult Catchall(string unmatched)
         {
@@ -106,4 +138,6 @@ namespace vk_web_mock.Controllers
             return NotFound();
         }
     }
+
+
 }

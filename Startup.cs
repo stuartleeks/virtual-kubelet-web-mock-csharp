@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using vk_web_mock.Services;
 
 namespace vk_web_mock
 {
@@ -33,6 +34,8 @@ namespace vk_web_mock
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddSingleton(new PodStore());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
