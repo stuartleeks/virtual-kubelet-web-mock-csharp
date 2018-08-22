@@ -6,6 +6,7 @@ namespace vk_web_mock.Services
 {
     public class PodStore
     {
+        // TODO - thread safety (but hey, this is demo-ware ;-) )
         private readonly List<Pod> _pods;
 
         public PodStore()
@@ -26,7 +27,18 @@ namespace vk_web_mock.Services
         public Pod GetPod(string @namespace, string name)
         {
             // TODO consider using a Dictionary keyed on namesapce and pod name
-            return _pods.FirstOrDefault(p=> p.Metadata.Namespace == @namespace && p.Metadata.Name == name);
+            return _pods.FirstOrDefault(p => p.Metadata.Namespace == @namespace && p.Metadata.Name == name);
+        }
+
+        public bool DeletePod(string @namespace, string name)
+        {
+            var pod = GetPod(@namespace, name);
+            
+            if (pod == null)
+                return false;
+            
+            _pods.Remove(pod);
+            return true;
         }
     }
 }

@@ -27,18 +27,20 @@ namespace vk_web_mock.Controllers
         [HttpGet("capacity")]
         public IActionResult GetCapacity()
         {
-            return Json(new {
+            return Json(new
+            {
                 cpu = "20",
                 memory = "100Gi",
-                pods ="20"
+                pods = "20"
             });
         }
 
         [HttpGet("nodeConditions")]
-        public IActionResult GetNodeConditions(){
+        public IActionResult GetNodeConditions()
+        {
             DateTime utcNow = DateTime.UtcNow;
 
-            return base.Json(new [] {
+            return base.Json(new[] {
                 new {
                     lastHeartbeatTime = utcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                     lastTransitionTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
@@ -91,10 +93,11 @@ namespace vk_web_mock.Controllers
             });
         }
 
-        
+
         [HttpGet("nodeAddresses")]
-        public IActionResult GetNodeAddresses(){
-            return base.Json(new object[] {});
+        public IActionResult GetNodeAddresses()
+        {
+            return base.Json(new object[] { });
             // func (p *MockProvider) NodeAddresses() []v1.NodeAddress {
             // 	return []v1.NodeAddress{
             // 		{
@@ -129,7 +132,31 @@ namespace vk_web_mock.Controllers
             _podStore.AddPod(pod);
             return Ok();
         }
+        [HttpDelete("deletePod")]
+        public IActionResult DeletePod(Pod pod)
+        {
+            if (_podStore.DeletePod(pod.Metadata.Namespace, pod.Metadata.Name))
+            {
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
 
+        [HttpGet("getContainerLogs")]
+        public IActionResult GetContainerLogs([FromQuery]string @namespace, [FromQuery]string podName, [FromQuery]string containerName, [FromQuery]int tail)
+        {
+            var pod = _podStore.GetPod(@namespace, podName);
+            if (pod == null)
+                return NotFound("No such pod");
+
+            if (!pod.Spec.Containers.Any(c=> c.Name == containerName))
+                return NotFound("No such container");
+
+            return Content($"TODO: implement container logs: {@namespace}, {podName}, {containerName}"); // TODO implement container logs
+        }
 
         [HttpGet("{*unmatched}")]
         public IActionResult Catchall(string unmatched)
