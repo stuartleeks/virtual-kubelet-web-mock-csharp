@@ -5,35 +5,30 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using vk_web_mock.Models;
+using vk_web_mock.Models.Home;
+using vk_web_mock.Services;
 
 namespace vk_web_mock.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly PodStore _podStore;
+
+        public HomeController(PodStore podStore)
+        {
+            _podStore = podStore;
+        }
+        [HttpGet("")]
         public IActionResult Index()
         {
-            return View();
+            var model = new IndexViewModel
+            {
+                Pods = _podStore.GetPods()
+            };
+            return View(model);
         }
 
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
+        [HttpGet("Error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
