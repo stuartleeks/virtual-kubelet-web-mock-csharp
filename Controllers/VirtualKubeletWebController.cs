@@ -42,8 +42,8 @@ namespace vk_web_mock.Controllers
 
             return base.Json(new[] {
                 new {
-                    lastHeartbeatTime = utcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                    lastTransitionTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                    lastHeartbeatTime = utcNow,
+                    lastTransitionTime = utcNow,
                     message= "At your service",
                     reason = "KubeletReady",
                     status = "True",
@@ -129,7 +129,31 @@ namespace vk_web_mock.Controllers
         [HttpPost("createPod")]
         public IActionResult CreatePod(Pod pod)
         {
+            // update state so that we show as running!
+            pod.Status.Phase = PodPhase.Running;
+            pod.Status.Conditions = new[] {
+                new PodCondition{ Type = PodConditionType.Scheduled, Status = "True"},
+                new PodCondition{ Type = PodConditionType.Initialized, Status = "True"},
+                new PodCondition{ Type = PodConditionType.Ready, Status = "True"},
+            };
+            // TODO add pod.Status.ContainerStatuses
+            pod.Status.ContainerStatuses = pod.Spec.Containers
+                .Select(container => new ContainerStatus
+                {
+                    Name = container.Name,
+                    Image = container.Image,
+                    Ready = true,
+                    State = new ContainerState{
+                        Running = new ContainerStateRunning
+                        {
+                            StartedAt = DateTime.UtcNow
+                        }
+                    }
+                })
+                .ToArray();
+
             _podStore.AddPod(pod);
+
             return Ok();
         }
         [HttpDelete("deletePod")]
@@ -152,7 +176,7 @@ namespace vk_web_mock.Controllers
             if (pod == null)
                 return NotFound("No such pod");
 
-            if (!pod.Spec.Containers.Any(c=> c.Name == containerName))
+            if (!pod.Spec.Containers.Any(c => c.Name == containerName))
                 return NotFound("No such container");
 
             return Content($"TODO: implement container logs: {@namespace}, {podName}, {containerName}"); // TODO implement container logs
