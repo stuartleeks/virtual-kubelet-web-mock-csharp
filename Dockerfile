@@ -11,4 +11,8 @@ RUN dotnet publish vk-web-mock.csproj -c Release -o /app
 FROM microsoft/dotnet:2.1-aspnetcore-runtime-alpine
 WORKDIR /app
 COPY --from=build /app .
+
+ENV ASPNETCORE_URLS=http://+:5000
+EXPOSE 5000/tcp
+
 ENTRYPOINT ["dotnet", "vk-web-mock.dll"]

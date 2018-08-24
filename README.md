@@ -16,7 +16,7 @@ This API simply stores the a list of the pods that it has been requested to crea
 To run the Mock API via docker run
 
 ```bash
-docker run -p 5000:80 stuartleeks/vk-web-mock
+docker run -p 5000:5000 stuartleeks/vk-web-mock
 ```
 
 This will expose the API on http://localhost:5000.
