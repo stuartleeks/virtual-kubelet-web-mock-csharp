@@ -4,18 +4,17 @@
 }
 
 <h1>virtual-kubelet web mock provider</h1>
-<h2>Pods</h2>
-<table class="table">
-<thead>
-    <tr>
-        <td>Name</td>
-    </tr>
-</thead>
-<tbody>
-    @foreach(var pod in Model.Pods){
-    <tr>
-        <td>@pod.Metadata.Name</td>
-    </tr>
-    }
-</tbody>
-</table>
+<div>
+    See <a href="https://github.com/stuartleeks/virtual-kubelet-web-mock">https://github.com/stuartleeks/virtual-kubelet-web-mock</a>
+</div>
+
+<div>
+    <h2>API endpoints</h2>
+    Here are some endpoints (that respond to GET requests and don't require parameters):
+    <ul>
+        <li><a asp-controller="VirtualKubeletWeb" asp-action="GetCapacity">Capacity</a></li>
+        <li><a asp-controller="VirtualKubeletWeb" asp-action="GetNodeConditions">NodeConditions</a></li>
+        <li><a asp-controller="VirtualKubeletWeb" asp-action="GetNodeAddresses">NodeAddresses</a></li>
+        <li><a asp-controller="VirtualKubeletWeb" asp-action="GetPods">GetPods</a></li>
+    </ul>
+</div>
