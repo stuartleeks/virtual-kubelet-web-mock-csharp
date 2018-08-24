@@ -13,42 +13,6 @@ namespace vk_web_mock.Services
         public Spec Spec { get; set; }
         public Status Status { get; set; }
     }
-
-    public static class PodPhase
-    {
-
-        // PodPending means the pod has been accepted by the system, but one or more of the containers
-        // has not been started. This includes time before being bound to a node, as well as time spent
-        // pulling images onto the host.
-        public const string Pending = "Pending";
-        // PodRunning means the pod has been bound to a node and all of the containers have been started.
-        // At least one container is still running or is in the process of being restarted.
-        public const string Running = "Running";
-        // PodSucceeded means that all containers in the pod have voluntarily terminated
-        // with a container exit code of 0, and the system is not going to restart any of these containers.
-        public const string Succeeded = "Succeeded";
-        // PodFailed means that all containers in the pod have terminated, and at least one container has
-        // terminated in a failure (exited with a non-zero exit code or was stopped by the system).
-        public const string Failed = "Failed";
-        // PodUnknown means that for some reason the state of the pod could not be obtained, typically due
-        // to an error in communicating with the host of the pod.
-        public const string Unknown = "Unknown";
-    }
-
-
-    public static class PodConditionType
-    {
-        // PodScheduled represents status of the scheduling process for this pod.
-        public const string Scheduled = "PodScheduled";
-        // PodReady means the pod is able to service requests and should be added to the
-        // load balancing pools of all matching services.
-        public const string Ready = "Ready";
-        // PodInitialized means that all init containers in the pod have started successfully.
-        public const string Initialized = "Initialized";
-        // PodReasonUnschedulable reason in PodScheduled PodCondition means that the scheduler
-        // can't schedule the pod right now, for example due to insufficient resources in the cluster.
-        public const string Unschedulable = "Unschedulable";
-    }
     public class Metadata
     {
         public string Name { get; set; }
@@ -149,7 +113,7 @@ namespace vk_web_mock.Services
 
     public class Status
     {
-        public string Phase { get; set; }
+        public PodPhase Phase { get; set; }
         public string QosClass { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public PodCondition[] Conditions { get; set; }
@@ -157,11 +121,52 @@ namespace vk_web_mock.Services
         public ContainerStatus[] ContainerStatuses { get; set; }
     }
 
+    public enum PodPhase
+    {
+        // PodPending means the pod has been accepted by the system, but one or more of the containers
+        // has not been started. This includes time before being bound to a node, as well as time spent
+        // pulling images onto the host.
+        Pending,
+        // PodRunning means the pod has been bound to a node and all of the containers have been started.
+        // At least one container is still running or is in the process of being restarted.
+        Running,
+        // PodSucceeded means that all containers in the pod have voluntarily terminated
+        // with a container exit code of 0, and the system is not going to restart any of these containers.
+        Succeeded,
+        // PodFailed means that all containers in the pod have terminated, and at least one container has
+        // terminated in a failure (exited with a non-zero exit code or was stopped by the system).
+        Failed, 
+        // PodUnknown means that for some reason the state of the pod could not be obtained, typically due
+        // to an error in communicating with the host of the pod.
+        Unknown
+    }
+
     public class PodCondition
     {
         // partial class implementation!!
-        public string Type { get; set; }
-        public string Status { get; set; }
+        public PodConditionType Type { get; set; }
+        public PodConditionStatus Status { get; set; }
+    }
+
+
+    public enum PodConditionType
+    {
+        // PodScheduled represents status of the scheduling process for this pod.
+        PodScheduled,
+        // PodReady means the pod is able to service requests and should be added to the
+        // load balancing pools of all matching services.
+        Ready,
+        // PodInitialized means that all init containers in the pod have started successfully.
+        Initialized,
+        // PodReasonUnschedulable reason in PodScheduled PodCondition means that the scheduler
+        // can't schedule the pod right now, for example due to insufficient resources in the cluster.
+        Unschedulable
+    }
+    public enum PodConditionStatus
+    {
+        True,
+        False,
+        Unknown
     }
 
     public class ContainerStatus

@@ -12,6 +12,7 @@ using vk_web_mock.Services;
 namespace vk_web_mock.Controllers
 {
     [ApiController]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class VirtualKubeletWebController : Controller
     {
         private readonly PodStore _podStore;
@@ -41,55 +42,46 @@ namespace vk_web_mock.Controllers
             DateTime utcNow = DateTime.UtcNow;
 
             return base.Json(new[] {
-                new {
-                    lastHeartbeatTime = utcNow,
-                    lastTransitionTime = utcNow,
-                    message= "At your service",
-                    reason = "KubeletReady",
-                    status = "True",
-                    type="Ready"
-                }
-
-        //         {
-		// 	Type:               "Ready",
-		// 	Status:             v1.ConditionTrue,
-		// 	LastHeartbeatTime:  metav1.Now(),
-		// 	LastTransitionTime: metav1.Now(),
-		// 	Reason:             "KubeletReady",
-		// 	Message:            "kubelet is ready.",
-		// },
-		// {
-		// 	Type:               "OutOfDisk",
-		// 	Status:             v1.ConditionFalse,
-		// 	LastHeartbeatTime:  metav1.Now(),
-		// 	LastTransitionTime: metav1.Now(),
-		// 	Reason:             "KubeletHasSufficientDisk",
-		// 	Message:            "kubelet has sufficient disk space available",
-		// },
-		// {
-		// 	Type:               "MemoryPressure",
-		// 	Status:             v1.ConditionFalse,
-		// 	LastHeartbeatTime:  metav1.Now(),
-		// 	LastTransitionTime: metav1.Now(),
-		// 	Reason:             "KubeletHasSufficientMemory",
-		// 	Message:            "kubelet has sufficient memory available",
-		// },
-		// {
-		// 	Type:               "DiskPressure",
-		// 	Status:             v1.ConditionFalse,
-		// 	LastHeartbeatTime:  metav1.Now(),
-		// 	LastTransitionTime: metav1.Now(),
-		// 	Reason:             "KubeletHasNoDiskPressure",
-		// 	Message:            "kubelet has no disk pressure",
-		// },
-		// {
-		// 	Type:               "NetworkUnavailable",
-		// 	Status:             v1.ConditionFalse,
-		// 	LastHeartbeatTime:  metav1.Now(),
-		// 	LastTransitionTime: metav1.Now(),
-		// 	Reason:             "RouteCreated",
-		// 	Message:            "RouteController created a route",
-		// },
+                new NodeCondition {
+                    LastHeartbeatTime = utcNow,
+                    LastTransitionTime = utcNow,
+                    Message= "At your service",
+                    Reason = "KubeletReady",
+                    Status = NodeConditionStatus.True,
+                    Type= NodeConditionType.Ready
+                },
+                new NodeCondition {
+                    LastHeartbeatTime = utcNow,
+                    LastTransitionTime = utcNow,
+                    Message= "Plenty of disk space here",
+                    Reason = "KubeletHasSufficientDisk",
+                    Status = NodeConditionStatus.False,
+                    Type= NodeConditionType.OutOfDisk
+                },
+                new NodeCondition {
+                    LastHeartbeatTime = utcNow,
+                    LastTransitionTime = utcNow,
+                    Message= "Plenty of memory here",
+                    Reason = "KubeletHasSufficientMemory",
+                    Status = NodeConditionStatus.False,
+                    Type= NodeConditionType.MemoryPressure
+                },
+                new NodeCondition {
+                    LastHeartbeatTime = utcNow,
+                    LastTransitionTime = utcNow,
+                    Message= "At your service",
+                    Reason = "KubeletHasNoDiskPressure",
+                    Status = NodeConditionStatus.False,
+                    Type= NodeConditionType.DiskPressure
+                },
+                new NodeCondition {
+                    LastHeartbeatTime = utcNow,
+                    LastTransitionTime = utcNow,
+                    Message= "Cables all intact",
+                    Reason = "RouteCreated",
+                    Status = NodeConditionStatus.False,
+                    Type= NodeConditionType.NetworkUnavailable
+                },
             });
         }
 
@@ -97,15 +89,7 @@ namespace vk_web_mock.Controllers
         [HttpGet("nodeAddresses")]
         public IActionResult GetNodeAddresses()
         {
-            return base.Json(new object[] { });
-            // func (p *MockProvider) NodeAddresses() []v1.NodeAddress {
-            // 	return []v1.NodeAddress{
-            // 		{
-            // 			Type:    "InternalIP",
-            // 			Address: p.internalIP,
-            // 		},
-            // 	}
-            // }
+            return base.Json(new NodeAddress[] { });
         }
 
         [HttpGet("getPods")]
@@ -132,18 +116,18 @@ namespace vk_web_mock.Controllers
             // update state so that we show as running!
             pod.Status.Phase = PodPhase.Running;
             pod.Status.Conditions = new[] {
-                new PodCondition{ Type = PodConditionType.Scheduled, Status = "True"},
-                new PodCondition{ Type = PodConditionType.Initialized, Status = "True"},
-                new PodCondition{ Type = PodConditionType.Ready, Status = "True"},
+                new PodCondition{ Type = PodConditionType.PodScheduled, Status = PodConditionStatus.True},
+                new PodCondition{ Type = PodConditionType.Initialized, Status = PodConditionStatus.True},
+                new PodCondition{ Type = PodConditionType.Ready, Status = PodConditionStatus.True},
             };
-            // TODO add pod.Status.ContainerStatuses
             pod.Status.ContainerStatuses = pod.Spec.Containers
                 .Select(container => new ContainerStatus
                 {
                     Name = container.Name,
                     Image = container.Image,
                     Ready = true,
-                    State = new ContainerState{
+                    State = new ContainerState
+                    {
                         Running = new ContainerStateRunning
                         {
                             StartedAt = DateTime.UtcNow
@@ -189,6 +173,4 @@ namespace vk_web_mock.Controllers
             return NotFound();
         }
     }
-
-
 }

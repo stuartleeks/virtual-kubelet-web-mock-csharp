@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using vk_web_mock.Services;
 
@@ -34,7 +35,8 @@ namespace vk_web_mock
                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                    options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ssZ";
-                //    options.SerializerSettings.Converters.Add(new BooleanConverter());
+                   //    options.SerializerSettings.Converters.Add(new BooleanConverter());
+                   options.SerializerSettings.Converters.Add(new StringEnumConverter());
                }
                 );
 
