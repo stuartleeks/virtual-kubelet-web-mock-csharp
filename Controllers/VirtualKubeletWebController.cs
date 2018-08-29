@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -89,12 +89,25 @@ namespace vk_web_mock.Controllers
         [HttpGet("nodeAddresses")]
         public IActionResult GetNodeAddresses()
         {
-            return base.Json(new NodeAddress[] { });
+            var kubeletPort = Environment.GetEnvironmentVariable("KUBELET_PORT");
+            var kubeletPodIp = Environment.GetEnvironmentVariable("VKUBELET_POD_IP");
+            if (string.IsNullOrEmpty(kubeletPodIp))
+            {
+                _logger.LogInformation("NodeAddresses - returning empty list");
+                return base.Json(new NodeAddress[] { });
+            }
+            else
+            {
+                var address = new NodeAddress { Type = NodeAddressType.InternalIP, Address = kubeletPodIp };
+                _logger.LogInformation($"NodeAddresses - returning {address.Type} {address.Address}");
+                return base.Json(new[] { address });
+            }
         }
 
         [HttpGet("getPods")]
         public IActionResult GetPods()
         {
+            _logger.LogInformation($"GetPods");
             var pods = _podStore.GetPods();
             return base.Json(pods);
         }
@@ -105,14 +118,17 @@ namespace vk_web_mock.Controllers
             var pod = _podStore.GetPod(@namespace, name);
             if (pod == null)
             {
+            _logger.LogInformation($"GetPodStatus: returning NotFound for {@namespace}:{name}");
                 return NotFound();
             }
+            _logger.LogInformation($"GetPodStatus: returning {pod.Status} for {@namespace}:{name}");
             return Json(pod.Status);
         }
 
         [HttpPost("createPod")]
         public IActionResult CreatePod(Pod pod)
         {
+            _logger.LogInformation($"CreatePod: {pod.Metadata.Namespace}:{pod.Metadata.Name}");
             // update state so that we show as running!
             pod.Status.Phase = PodPhase.Running;
             pod.Status.Conditions = new[] {
@@ -143,6 +159,7 @@ namespace vk_web_mock.Controllers
         [HttpDelete("deletePod")]
         public IActionResult DeletePod(Pod pod)
         {
+            _logger.LogInformation($"DeletePod: {pod.Metadata.Namespace}:{pod.Metadata.Name}");
             if (_podStore.DeletePod(pod.Metadata.Namespace, pod.Metadata.Name))
             {
                 return Ok();
@@ -156,6 +173,7 @@ namespace vk_web_mock.Controllers
         [HttpGet("getContainerLogs")]
         public IActionResult GetContainerLogs([FromQuery]string @namespace, [FromQuery]string podName, [FromQuery]string containerName, [FromQuery]int tail)
         {
+            _logger.LogInformation($"GetContainerLogs: {@namespace}:{podName}:{containerName}");
             var pod = _podStore.GetPod(@namespace, podName);
             if (pod == null)
                 return NotFound("No such pod");
