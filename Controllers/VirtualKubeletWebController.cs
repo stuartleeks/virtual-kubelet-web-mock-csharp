@@ -108,7 +108,9 @@ namespace vk_web_mock.Controllers
         public IActionResult GetPods()
         {
             _logger.LogInformation($"GetPods");
-            var pods = _podStore.GetPods();
+            var pods = _podStore.GetPods()
+                .OrderBy(p=>p.Metadata.Namespace)
+                .ThenBy(p=>p.Metadata.Name); // sort for consistent output :-)
             return base.Json(pods);
         }
 
@@ -152,6 +154,19 @@ namespace vk_web_mock.Controllers
                 })
                 .ToArray();
 
+            _podStore.AddPod(pod);
+
+            return Ok();
+        }
+        
+        [HttpPost("updatePod")]
+        public IActionResult UpdatePod(Pod pod)
+        {
+            _logger.LogInformation($"Update: {pod.Metadata.Namespace}:{pod.Metadata.Name}");
+
+            // Delete and re-add
+            // TODO check that we know about the pod in future?
+            _podStore.DeletePod(pod.Metadata.Namespace, pod.Metadata.Name);
             _podStore.AddPod(pod);
 
             return Ok();
