@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -163,7 +163,8 @@ namespace vk_web_mock.Controllers
             if (!pod.Spec.Containers.Any(c => c.Name == containerName))
                 return NotFound("No such container");
 
-            return Content($"TODO: implement container logs: {@namespace}, {podName}, {containerName}"); // TODO implement container logs
+            var logContent = $"Simulated log content for {@namespace}, {podName}, {containerName}\nIf this provider actually ran the containers then the logs would appear here ;-)\n";
+            return Content(logContent);
         }
 
         [HttpGet("{*unmatched}")]
