@@ -35,7 +35,6 @@ namespace vk_web_mock
                    .UseUrls("http://+:5000")
                    .ConfigureServices(services =>
                    {
-                       services.AddMvc();
                        services.AddCors();
                    })
                     .Configure(app =>
@@ -61,8 +60,8 @@ namespace vk_web_mock
                         app.HandlePath("/deletePod", DeletePod);
                         app.HandlePath("/getContainerLogs", GetContainerLogs);
 
-                        app.UseStaticFiles(); // CSS etc
-                        app.UseMvc(); // handle Razor page for homepage
+                        app.UseDefaultFiles();
+                        app.UseStaticFiles(); // homepage, CSS etc
 
                         app.Run(context =>
                         {
