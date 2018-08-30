@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using vk_web_mock.Models;
 using vk_web_mock.Services;
 
 namespace vk_web_mock.Controllers

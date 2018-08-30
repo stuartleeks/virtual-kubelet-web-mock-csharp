@@ -1,9 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@page
+@using vk_web_mock
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - vk_web_mock</title>
+    <title>vk_web_mock</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -37,10 +41,24 @@
     </nav>
 
     <div class="container body-content">
-        @RenderBody()
+        <h1>virtual-kubelet web mock provider</h1>
+        <div>
+            See <a href="https://github.com/stuartleeks/virtual-kubelet-web-mock">https://github.com/stuartleeks/virtual-kubelet-web-mock</a>
+        </div>
+
+        <div>
+            <h2>API endpoints</h2>
+            Here are some endpoints (that respond to GET requests and don't require parameters):
+            <ul>
+                <li><a asp-controller="VirtualKubeletWeb" asp-action="GetCapacity">Capacity</a></li>
+                <li><a asp-controller="VirtualKubeletWeb" asp-action="GetNodeConditions">NodeConditions</a></li>
+                <li><a asp-controller="VirtualKubeletWeb" asp-action="GetNodeAddresses">NodeAddresses</a></li>
+                <li><a asp-controller="VirtualKubeletWeb" asp-action="GetPods">GetPods</a></li>
+            </ul>
+        </div>
         <hr />
         <footer>
-            <p>&copy; 2018 - vk_web_mock</p>
+            <p>&copy; 2018 - Stuart Leeks</p>
         </footer>
     </div>
 
@@ -62,9 +80,7 @@
                 crossorigin="anonymous"
                 integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
         </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 
-    @RenderSection("Scripts", required: false)
 </body>
 </html>
