@@ -159,7 +159,7 @@ namespace vk_web_mock.Controllers
             return Ok();
         }
         
-        [HttpPost("updatePod")]
+        [HttpPut("updatePod")]
         public IActionResult UpdatePod(Pod pod)
         {
             _logger.LogInformation($"Update: {pod.Metadata.Namespace}:{pod.Metadata.Name}");
