@@ -1,5 +1,5 @@
-# Virtual Kubelet Web Provider Mock Implementation
-This project is a sample API implementation for the [Virtual Kubelet](https://github.com/virtual-kubelet/virtual-kubelet) [web provider](https://github.com/virtual-kubelet/virtual-kubelet/tree/master/providers/web)
+# Virtual Kubelet Web Provider C# Mock Implementation
+This project is a sample API implementation for the [Virtual Kubelet](https://github.com/virtual-kubelet/virtual-kubelet) [web provider](https://github.com/virtual-kubelet/virtual-kubelet/tree/master/providers/web) written in C# on .NET Core
 
 This API simply stores the a list of the pods that it has been requested to create, marks them as started and serves up their status
 
@@ -20,6 +20,10 @@ docker run -p 5000:5000 stuartleeks/vk-web-mock
 ```
 
 This will expose the API on http://localhost:5000.
+
+## Running locally for development
+
+To run the API locally, run `dotnet run` (or `dotnet watch run` to monitor for file changes and automatically restart the site)
 
 ## Connecting the API with Virtual Kubelet locally
 
