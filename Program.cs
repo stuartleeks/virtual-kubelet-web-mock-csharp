@@ -136,7 +136,6 @@ namespace vk_web_mock
             if (!context.ShouldProcessFor(HttpMethods.Get))
                 return;
 
-            var kubeletPort = Environment.GetEnvironmentVariable("KUBELET_PORT");
             var kubeletPodIp = Environment.GetEnvironmentVariable("VKUBELET_POD_IP");
             if (string.IsNullOrEmpty(kubeletPodIp))
             {
